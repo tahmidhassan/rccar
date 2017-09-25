@@ -1,0 +1,175 @@
+
+RCCarControlCode.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000000a8  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .debug_aranges 00000020  00000000  00000000  000000fc  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  2 .debug_pubnames 0000001b  00000000  00000000  0000011c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  3 .debug_info   00000075  00000000  00000000  00000137  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_abbrev 0000003f  00000000  00000000  000001ac  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_line   00000124  00000000  00000000  000001eb  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_frame  00000020  00000000  00000000  00000310  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_str    0000008d  00000000  00000000  00000330  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	19 c0       	rjmp	.+50     	; 0x36 <__bad_interrupt>
+   4:	18 c0       	rjmp	.+48     	; 0x36 <__bad_interrupt>
+   6:	17 c0       	rjmp	.+46     	; 0x36 <__bad_interrupt>
+   8:	16 c0       	rjmp	.+44     	; 0x36 <__bad_interrupt>
+   a:	15 c0       	rjmp	.+42     	; 0x36 <__bad_interrupt>
+   c:	14 c0       	rjmp	.+40     	; 0x36 <__bad_interrupt>
+   e:	13 c0       	rjmp	.+38     	; 0x36 <__bad_interrupt>
+  10:	12 c0       	rjmp	.+36     	; 0x36 <__bad_interrupt>
+  12:	11 c0       	rjmp	.+34     	; 0x36 <__bad_interrupt>
+  14:	10 c0       	rjmp	.+32     	; 0x36 <__bad_interrupt>
+  16:	0f c0       	rjmp	.+30     	; 0x36 <__bad_interrupt>
+  18:	0e c0       	rjmp	.+28     	; 0x36 <__bad_interrupt>
+  1a:	0d c0       	rjmp	.+26     	; 0x36 <__bad_interrupt>
+  1c:	0c c0       	rjmp	.+24     	; 0x36 <__bad_interrupt>
+  1e:	0b c0       	rjmp	.+22     	; 0x36 <__bad_interrupt>
+  20:	0a c0       	rjmp	.+20     	; 0x36 <__bad_interrupt>
+  22:	09 c0       	rjmp	.+18     	; 0x36 <__bad_interrupt>
+  24:	08 c0       	rjmp	.+16     	; 0x36 <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+  32:	02 d0       	rcall	.+4      	; 0x38 <main>
+  34:	37 c0       	rjmp	.+110    	; 0xa4 <_exit>
+
+00000036 <__bad_interrupt>:
+  36:	e4 cf       	rjmp	.-56     	; 0x0 <__vectors>
+
+00000038 <main>:
+
+// ATMega8 RC Car - Control Engine by Tahmid
+
+int main()
+{
+	DDRB = 0x00;
+  38:	17 ba       	out	0x17, r1	; 23
+	DDRD = 0xFF;    // PORTC te 1 ta Slot kom, so PORTD was used
+  3a:	8f ef       	ldi	r24, 0xFF	; 255
+  3c:	81 bb       	out	0x11, r24	; 17
+	while(1)
+	{
+		if (PINB == 128)
+		{ PORTD = 160; } // Forward 
+  3e:	60 ea       	ldi	r22, 0xA0	; 160
+
+		if (PINB == 64)
+		{ PORTD = 80; }  // Reverse 
+  40:	50 e5       	ldi	r21, 0x50	; 80
+
+		if (PINB == 160)
+		{ PORTD = 128; }  // F-R
+  42:	40 e8       	ldi	r20, 0x80	; 128
+
+		if (PINB == 144)
+		{ PORTD = 32; }   // F-L
+  44:	30 e2       	ldi	r19, 0x20	; 32
+
+		if (PINB == 96)
+		{ PORTD = 64; }   // R-R
+  46:	20 e4       	ldi	r18, 0x40	; 64
+
+		if (PINB == 80)
+		{ PORTD = 16; }    // R-L
+  48:	90 e1       	ldi	r25, 0x10	; 16
+{
+	DDRB = 0x00;
+	DDRD = 0xFF;    // PORTC te 1 ta Slot kom, so PORTD was used
+	while(1)
+	{
+		if (PINB == 128)
+  4a:	86 b3       	in	r24, 0x16	; 22
+  4c:	80 38       	cpi	r24, 0x80	; 128
+  4e:	09 f4       	brne	.+2      	; 0x52 <__SREG__+0x13>
+		{ PORTD = 160; } // Forward 
+  50:	62 bb       	out	0x12, r22	; 18
+
+		if (PINB == 64)
+  52:	86 b3       	in	r24, 0x16	; 22
+  54:	80 34       	cpi	r24, 0x40	; 64
+  56:	09 f4       	brne	.+2      	; 0x5a <__SREG__+0x1b>
+		{ PORTD = 80; }  // Reverse 
+  58:	52 bb       	out	0x12, r21	; 18
+
+		if (PINB == 160)
+  5a:	86 b3       	in	r24, 0x16	; 22
+  5c:	80 3a       	cpi	r24, 0xA0	; 160
+  5e:	09 f4       	brne	.+2      	; 0x62 <__SREG__+0x23>
+		{ PORTD = 128; }  // F-R
+  60:	42 bb       	out	0x12, r20	; 18
+
+		if (PINB == 144)
+  62:	86 b3       	in	r24, 0x16	; 22
+  64:	80 39       	cpi	r24, 0x90	; 144
+  66:	09 f4       	brne	.+2      	; 0x6a <__SREG__+0x2b>
+		{ PORTD = 32; }   // F-L
+  68:	32 bb       	out	0x12, r19	; 18
+
+		if (PINB == 96)
+  6a:	86 b3       	in	r24, 0x16	; 22
+  6c:	80 36       	cpi	r24, 0x60	; 96
+  6e:	09 f4       	brne	.+2      	; 0x72 <__SREG__+0x33>
+		{ PORTD = 64; }   // R-R
+  70:	22 bb       	out	0x12, r18	; 18
+
+		if (PINB == 80)
+  72:	86 b3       	in	r24, 0x16	; 22
+  74:	80 35       	cpi	r24, 0x50	; 80
+  76:	09 f4       	brne	.+2      	; 0x7a <__SREG__+0x3b>
+		{ PORTD = 16; }    // R-L
+  78:	92 bb       	out	0x12, r25	; 18
+
+		if ( PINB == 0 )
+  7a:	86 b3       	in	r24, 0x16	; 22
+  7c:	88 23       	and	r24, r24
+  7e:	09 f4       	brne	.+2      	; 0x82 <__SREG__+0x43>
+		{ PORTD = 0; }     // Clearing Memory or whatever it is,
+  80:	12 ba       	out	0x12, r1	; 18
+						   // when no buttons are pressed
+	
+	
+		if ( PINB == 192 || PINB == 224 || PINB == 240 || PINB == 112 || PINB == 48)
+  82:	86 b3       	in	r24, 0x16	; 22
+  84:	80 3c       	cpi	r24, 0xC0	; 192
+  86:	61 f0       	breq	.+24     	; 0xa0 <__SREG__+0x61>
+  88:	86 b3       	in	r24, 0x16	; 22
+  8a:	80 3e       	cpi	r24, 0xE0	; 224
+  8c:	49 f0       	breq	.+18     	; 0xa0 <__SREG__+0x61>
+  8e:	86 b3       	in	r24, 0x16	; 22
+  90:	80 3f       	cpi	r24, 0xF0	; 240
+  92:	31 f0       	breq	.+12     	; 0xa0 <__SREG__+0x61>
+  94:	86 b3       	in	r24, 0x16	; 22
+  96:	80 37       	cpi	r24, 0x70	; 112
+  98:	19 f0       	breq	.+6      	; 0xa0 <__SREG__+0x61>
+  9a:	86 b3       	in	r24, 0x16	; 22
+  9c:	80 33       	cpi	r24, 0x30	; 48
+  9e:	a9 f6       	brne	.-86     	; 0x4a <__SREG__+0xb>
+		{ PORTD = 0; }
+  a0:	12 ba       	out	0x12, r1	; 18
+  a2:	d3 cf       	rjmp	.-90     	; 0x4a <__SREG__+0xb>
+
+000000a4 <_exit>:
+  a4:	f8 94       	cli
+
+000000a6 <__stop_program>:
+  a6:	ff cf       	rjmp	.-2      	; 0xa6 <__stop_program>

@@ -1,0 +1,193 @@
+
+OptimizedCarCode.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000000b8  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .debug_aranges 00000020  00000000  00000000  0000010c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  2 .debug_pubnames 0000001b  00000000  00000000  0000012c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  3 .debug_info   00000075  00000000  00000000  00000147  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_abbrev 0000003f  00000000  00000000  000001bc  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_line   0000010e  00000000  00000000  000001fb  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_frame  00000020  00000000  00000000  0000030c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_str    0000008d  00000000  00000000  0000032c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	19 c0       	rjmp	.+50     	; 0x36 <__bad_interrupt>
+   4:	18 c0       	rjmp	.+48     	; 0x36 <__bad_interrupt>
+   6:	17 c0       	rjmp	.+46     	; 0x36 <__bad_interrupt>
+   8:	16 c0       	rjmp	.+44     	; 0x36 <__bad_interrupt>
+   a:	15 c0       	rjmp	.+42     	; 0x36 <__bad_interrupt>
+   c:	14 c0       	rjmp	.+40     	; 0x36 <__bad_interrupt>
+   e:	13 c0       	rjmp	.+38     	; 0x36 <__bad_interrupt>
+  10:	12 c0       	rjmp	.+36     	; 0x36 <__bad_interrupt>
+  12:	11 c0       	rjmp	.+34     	; 0x36 <__bad_interrupt>
+  14:	10 c0       	rjmp	.+32     	; 0x36 <__bad_interrupt>
+  16:	0f c0       	rjmp	.+30     	; 0x36 <__bad_interrupt>
+  18:	0e c0       	rjmp	.+28     	; 0x36 <__bad_interrupt>
+  1a:	0d c0       	rjmp	.+26     	; 0x36 <__bad_interrupt>
+  1c:	0c c0       	rjmp	.+24     	; 0x36 <__bad_interrupt>
+  1e:	0b c0       	rjmp	.+22     	; 0x36 <__bad_interrupt>
+  20:	0a c0       	rjmp	.+20     	; 0x36 <__bad_interrupt>
+  22:	09 c0       	rjmp	.+18     	; 0x36 <__bad_interrupt>
+  24:	08 c0       	rjmp	.+16     	; 0x36 <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+  32:	02 d0       	rcall	.+4      	; 0x38 <main>
+  34:	3f c0       	rjmp	.+126    	; 0xb4 <_exit>
+
+00000036 <__bad_interrupt>:
+  36:	e4 cf       	rjmp	.-56     	; 0x0 <__vectors>
+
+00000038 <main>:
+#include <avr/io.h>
+
+int main() {
+
+DDRD = 0b11110000;
+  38:	80 ef       	ldi	r24, 0xF0	; 240
+  3a:	81 bb       	out	0x11, r24	; 17
+	{
+		while (PIND)
+		{
+
+			if (PIND == 0b1000 || PIND == 0b10101000) 
+			{ PORTD = 0b10100000;
+  3c:	60 ea       	ldi	r22, 0xA0	; 160
+			} 										//Fwd
+			else if (PIND == 0b0100|| PIND== 0b01010100)
+			{ PORTD = 0b01010000; 
+  3e:	50 e5       	ldi	r21, 0x50	; 80
+			}			// Rev
+
+			else if (PIND == 0b1010 || PIND == 0b10001010)
+			{ PORTD = 0b10000000; 
+  40:	40 e8       	ldi	r20, 0x80	; 128
+			}			// Fwd-Right
+
+			else if (PIND == 0b1001 || PIND == 0b00101001)
+			{ PORTD = 0b00100000; 
+  42:	30 e2       	ldi	r19, 0x20	; 32
+			}			// Fwd-Left
+
+			else if (PIND == 0b0110 || PIND == 0b01000110)
+			{ PORTD = 0b01000000; 
+  44:	20 e4       	ldi	r18, 0x40	; 64
+			}			// Rev-Right
+
+			else if (PIND == 0b0101 || PIND == 0b00010101)
+			{ PORTD = 0b00010000; 
+  46:	90 e1       	ldi	r25, 0x10	; 16
+  48:	31 c0       	rjmp	.+98     	; 0xac <__SREG__+0x6d>
+
+	{
+		while (PIND)
+		{
+
+			if (PIND == 0b1000 || PIND == 0b10101000) 
+  4a:	80 b3       	in	r24, 0x10	; 16
+  4c:	88 30       	cpi	r24, 0x08	; 8
+  4e:	19 f0       	breq	.+6      	; 0x56 <__SREG__+0x17>
+  50:	80 b3       	in	r24, 0x10	; 16
+  52:	88 3a       	cpi	r24, 0xA8	; 168
+  54:	11 f4       	brne	.+4      	; 0x5a <__SREG__+0x1b>
+			{ PORTD = 0b10100000;
+  56:	62 bb       	out	0x12, r22	; 18
+  58:	29 c0       	rjmp	.+82     	; 0xac <__SREG__+0x6d>
+			} 										//Fwd
+			else if (PIND == 0b0100|| PIND== 0b01010100)
+  5a:	80 b3       	in	r24, 0x10	; 16
+  5c:	84 30       	cpi	r24, 0x04	; 4
+  5e:	19 f0       	breq	.+6      	; 0x66 <__SREG__+0x27>
+  60:	80 b3       	in	r24, 0x10	; 16
+  62:	84 35       	cpi	r24, 0x54	; 84
+  64:	11 f4       	brne	.+4      	; 0x6a <__SREG__+0x2b>
+			{ PORTD = 0b01010000; 
+  66:	52 bb       	out	0x12, r21	; 18
+  68:	21 c0       	rjmp	.+66     	; 0xac <__SREG__+0x6d>
+			}			// Rev
+
+			else if (PIND == 0b1010 || PIND == 0b10001010)
+  6a:	80 b3       	in	r24, 0x10	; 16
+  6c:	8a 30       	cpi	r24, 0x0A	; 10
+  6e:	19 f0       	breq	.+6      	; 0x76 <__SREG__+0x37>
+  70:	80 b3       	in	r24, 0x10	; 16
+  72:	8a 38       	cpi	r24, 0x8A	; 138
+  74:	11 f4       	brne	.+4      	; 0x7a <__SREG__+0x3b>
+			{ PORTD = 0b10000000; 
+  76:	42 bb       	out	0x12, r20	; 18
+  78:	19 c0       	rjmp	.+50     	; 0xac <__SREG__+0x6d>
+			}			// Fwd-Right
+
+			else if (PIND == 0b1001 || PIND == 0b00101001)
+  7a:	80 b3       	in	r24, 0x10	; 16
+  7c:	89 30       	cpi	r24, 0x09	; 9
+  7e:	19 f0       	breq	.+6      	; 0x86 <__SREG__+0x47>
+  80:	80 b3       	in	r24, 0x10	; 16
+  82:	89 32       	cpi	r24, 0x29	; 41
+  84:	11 f4       	brne	.+4      	; 0x8a <__SREG__+0x4b>
+			{ PORTD = 0b00100000; 
+  86:	32 bb       	out	0x12, r19	; 18
+  88:	11 c0       	rjmp	.+34     	; 0xac <__SREG__+0x6d>
+			}			// Fwd-Left
+
+			else if (PIND == 0b0110 || PIND == 0b01000110)
+  8a:	80 b3       	in	r24, 0x10	; 16
+  8c:	86 30       	cpi	r24, 0x06	; 6
+  8e:	19 f0       	breq	.+6      	; 0x96 <__SREG__+0x57>
+  90:	80 b3       	in	r24, 0x10	; 16
+  92:	86 34       	cpi	r24, 0x46	; 70
+  94:	11 f4       	brne	.+4      	; 0x9a <__SREG__+0x5b>
+			{ PORTD = 0b01000000; 
+  96:	22 bb       	out	0x12, r18	; 18
+  98:	09 c0       	rjmp	.+18     	; 0xac <__SREG__+0x6d>
+			}			// Rev-Right
+
+			else if (PIND == 0b0101 || PIND == 0b00010101)
+  9a:	80 b3       	in	r24, 0x10	; 16
+  9c:	85 30       	cpi	r24, 0x05	; 5
+  9e:	19 f0       	breq	.+6      	; 0xa6 <__SREG__+0x67>
+  a0:	80 b3       	in	r24, 0x10	; 16
+  a2:	85 31       	cpi	r24, 0x15	; 21
+  a4:	11 f4       	brne	.+4      	; 0xaa <__SREG__+0x6b>
+			{ PORTD = 0b00010000; 
+  a6:	92 bb       	out	0x12, r25	; 18
+  a8:	01 c0       	rjmp	.+2      	; 0xac <__SREG__+0x6d>
+			}			// Rev Left
+
+			else
+			{ PORTD = 0b00000000; 
+  aa:	12 ba       	out	0x12, r1	; 18
+DDRD = 0b11110000;
+
+while (1)
+
+	{
+		while (PIND)
+  ac:	80 b3       	in	r24, 0x10	; 16
+  ae:	88 23       	and	r24, r24
+  b0:	e9 f3       	breq	.-6      	; 0xac <__SREG__+0x6d>
+  b2:	cb cf       	rjmp	.-106    	; 0x4a <__SREG__+0xb>
+
+000000b4 <_exit>:
+  b4:	f8 94       	cli
+
+000000b6 <__stop_program>:
+  b6:	ff cf       	rjmp	.-2      	; 0xb6 <__stop_program>
